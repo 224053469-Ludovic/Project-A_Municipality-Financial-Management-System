@@ -1,304 +1,149 @@
-#include <stdio.h>
 #include <string.h>
-#include "assets.h"
+#include <stdio.h>
 
-static Asset assets[MAX_ASSETS];
-static int assetCount = 0;
+#define MAX_ASSETS 100
 
-void clearInputBuffer(void)
-{
-    int ch;
+// Structure for storing asset information
+struct Asset {
+    int assetID;
+    char assetName[50];
+    char assetType[30];
+    float purchaseValue;
+    char department[50];
+    char condition[30];
+};
 
-    while ((ch = getchar()) != '\n' && ch != EOF)
-    {
-    }
-}
+// Global array of assets
+struct Asset assets[MAX_ASSETS];
 
-int findAssetByID(int id)
-{
-    int i;
+int assetCount = 0;
 
-    for (i = 0; i < assetCount; i++)
-    {
-        if (assets[i].assetID == id)
-        {
-            return i;
-        }
-    }
 
-    return -1;
-}
+// ================================
+// ADD ASSET
+// ================================
+void addAsset() {
 
-void addAsset(void)
-{
-    int id;
-    int result;
-
-    if (assetCount >= MAX_ASSETS)
-    {
-        printf("\nAsset register is full.\n");
+    if (assetCount >= MAX_ASSETS) {
+        printf("\nAsset register is full!\n");
         return;
     }
 
-    while (1)
-    {
-        printf("\nEnter Asset ID: ");
-        result = scanf("%d", &id);
+    printf("\n========== ADD ASSET ==========\n");
 
-        if (result != 1)
-        {
-            printf("Invalid Asset ID.\n");
-            clearInputBuffer();
-            continue;
-        }
+    printf("Enter Asset ID: ");
+    scanf("%d", &assets[assetCount].assetID);
 
-        clearInputBuffer();
+    printf("Enter Asset Name: ");
+    scanf(" %[^\n]", assets[assetCount].assetName);
 
-        if (id <= 0)
-        {
-            printf("Asset ID must be greater than 0.\n");
-            continue;
-        }
+    printf("Enter Asset Type: ");
+    scanf(" %[^\n]", assets[assetCount].assetType);
 
-        if (findAssetByID(id) != -1)
-        {
-            printf("Asset ID already exists.\n");
-            continue;
-        }
+    printf("Enter Purchase Value: ");
+    scanf("%f", &assets[assetCount].purchaseValue);
 
-        break;
-    }
+    printf("Enter Department: ");
+    scanf(" %[^\n]", assets[assetCount].department);
 
-    assets[assetCount].assetID = id;
-
-    while (1)
-    {
-        printf("Enter Asset Name: ");
-
-        fgets(
-            assets[assetCount].assetName,
-            sizeof(assets[assetCount].assetName),
-            stdin
-        );
-
-        assets[assetCount].assetName[
-            strcspn(assets[assetCount].assetName, "\n")
-        ] = '\0';
-
-        if (strlen(assets[assetCount].assetName) == 0)
-        {
-            printf("Asset name cannot be empty.\n");
-            continue;
-        }
-
-        break;
-    }
-
-    while (1)
-    {
-        printf("Enter Asset Type: ");
-
-        fgets(
-            assets[assetCount].assetType,
-            sizeof(assets[assetCount].assetType),
-            stdin
-        );
-
-        assets[assetCount].assetType[
-            strcspn(assets[assetCount].assetType, "\n")
-        ] = '\0';
-
-        if (strlen(assets[assetCount].assetType) == 0)
-        {
-            printf("Asset type cannot be empty.\n");
-            continue;
-        }
-
-        break;
-    }
-
-    while (1)
-    {
-        printf("Enter Purchase Value (N$): ");
-
-        result = scanf(
-            "%lf",
-            &assets[assetCount].purchaseValue
-        );
-
-        if (result != 1)
-        {
-            printf("Invalid purchase value.\n");
-            clearInputBuffer();
-            continue;
-        }
-
-        clearInputBuffer();
-
-        if (assets[assetCount].purchaseValue < 0)
-        {
-            printf("Purchase value cannot be negative.\n");
-            continue;
-        }
-
-        break;
-    }
-
-    while (1)
-    {
-        printf("Enter Department: ");
-
-        fgets(
-            assets[assetCount].department,
-            sizeof(assets[assetCount].department),
-            stdin
-        );
-
-        assets[assetCount].department[
-            strcspn(assets[assetCount].department, "\n")
-        ] = '\0';
-
-        if (strlen(assets[assetCount].department) == 0)
-        {
-            printf("Department cannot be empty.\n");
-            continue;
-        }
-
-        break;
-    }
-
-    while (1)
-    {
-        printf("Enter Condition: ");
-
-        fgets(
-            assets[assetCount].condition,
-            sizeof(assets[assetCount].condition),
-            stdin
-        );
-
-        assets[assetCount].condition[
-            strcspn(assets[assetCount].condition, "\n")
-        ] = '\0';
-
-        if (strlen(assets[assetCount].condition) == 0)
-        {
-            printf("Condition cannot be empty.\n");
-            continue;
-        }
-
-        break;
-    }
+    printf("Enter Condition: ");
+    scanf(" %[^\n]", assets[assetCount].condition);
 
     assetCount++;
 
-    printf("\nAsset added successfully.\n");
+    printf("\nAsset added successfully!\n");
 }
 
-void displayAssets(void)
-{
+
+// ================================
+// DISPLAY ASSETS
+// ================================
+void displayAssets() {
+
     int i;
 
-    if (assetCount == 0)
-    {
-        printf("\nNo assets registered.\n");
+    if (assetCount == 0) {
+        printf("\nNo assets have been registered.\n");
         return;
     }
 
-    printf("\n");
-    printf("===============================================================\n");
-    printf("                    ASSET REGISTER\n");
-    printf("===============================================================\n");
+    printf("\n================ ASSET REGISTER ================\n");
 
-    for (i = 0; i < assetCount; i++)
-    {
-        printf("\nAsset ID       : %d\n", assets[i].assetID);
+    for (i = 0; i < assetCount; i++) {
+
+        printf("\nAsset %d\n", i + 1);
+        printf("----------------------------------------\n");
+        printf("Asset ID       : %d\n", assets[i].assetID);
         printf("Asset Name     : %s\n", assets[i].assetName);
         printf("Asset Type     : %s\n", assets[i].assetType);
-        printf("Purchase Value : N$%.2f\n", assets[i].purchaseValue);
+        printf("Purchase Value : %.2f\n", assets[i].purchaseValue);
         printf("Department     : %s\n", assets[i].department);
         printf("Condition      : %s\n", assets[i].condition);
-        printf("---------------------------------------------------------------\n");
     }
-
-    printf("Total Assets: %d\n", assetCount);
 }
 
-void searchAsset(void)
-{
+
+// ================================
+// SEARCH ASSET
+// ================================
+void searchAsset() {
+
     int id;
-    int position;
-    int result;
+    int i;
+    int found = 0;
 
-    if (assetCount == 0)
-    {
-        printf("\nNo assets registered.\n");
-        return;
+    printf("\n========== SEARCH ASSET ==========\n");
+
+    printf("Enter Asset ID to search: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < assetCount; i++) {
+
+        if (assets[i].assetID == id) {
+
+            printf("\nAsset Found!\n");
+            printf("----------------------------------------\n");
+            printf("Asset ID       : %d\n", assets[i].assetID);
+            printf("Asset Name     : %s\n", assets[i].assetName);
+            printf("Asset Type     : %s\n", assets[i].assetType);
+            printf("Purchase Value : %.2f\n", assets[i].purchaseValue);
+            printf("Department     : %s\n", assets[i].department);
+            printf("Condition      : %s\n", assets[i].condition);
+
+            found = 1;
+            break;
+        }
     }
 
-    printf("\nEnter Asset ID to search: ");
-
-    result = scanf("%d", &id);
-
-    if (result != 1)
-    {
-        printf("Invalid Asset ID.\n");
-        clearInputBuffer();
-        return;
+    if (found == 0) {
+        printf("\nAsset with ID %d was not found.\n", id);
     }
-
-    clearInputBuffer();
-
-    position = findAssetByID(id);
-
-    if (position == -1)
-    {
-        printf("\nAsset not found.\n");
-        return;
-    }
-
-    printf("\nAsset Found\n");
-    printf("========================================\n");
-    printf("Asset ID       : %d\n", assets[position].assetID);
-    printf("Asset Name     : %s\n", assets[position].assetName);
-    printf("Asset Type     : %s\n", assets[position].assetType);
-    printf("Purchase Value : N$%.2f\n", assets[position].purchaseValue);
-    printf("Department     : %s\n", assets[position].department);
-    printf("Condition      : %s\n", assets[position].condition);
-    printf("========================================\n");
 }
 
-void assetMenu(void)
-{
-    int choice;
-    int result;
 
-    do
-    {
-        printf("\n");
-        printf("========================================\n");
+// ================================
+// ASSET MANAGEMENT MENU
+// ================================
+void assetManagement() {
+
+    int choice;
+
+    do {
+
+        printf("\n========================================\n");
         printf("          ASSET MANAGEMENT\n");
         printf("========================================\n");
+
         printf("1. Add Asset\n");
         printf("2. Display Assets\n");
         printf("3. Search Asset\n");
         printf("4. Return to Main Menu\n");
-        printf("========================================\n");
-        printf("Enter your choice: ");
 
-        result = scanf("%d", &choice);
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
 
-        if (result != 1)
-        {
-            printf("Invalid choice.\n");
-            clearInputBuffer();
-            continue;
-        }
+        switch (choice) {
 
-        clearInputBuffer();
-
-        switch (choice)
-        {
             case 1:
                 addAsset();
                 break;
@@ -312,11 +157,72 @@ void assetMenu(void)
                 break;
 
             case 4:
+                printf("\nReturning to Main Menu...\n");
                 break;
 
             default:
-                printf("Invalid choice. Please choose 1-4.\n");
+                printf("\nInvalid choice! Please try again.\n");
         }
 
     } while (choice != 4);
+}
+
+
+// ================================
+// MAIN MENU
+// ================================
+int main() {
+
+    int choice;
+
+    do {
+
+        printf("\n\n");
+        printf("============================================\n");
+        printf("   MUNICIPAL FINANCIAL MANAGEMENT SYSTEM\n");
+        printf("============================================\n");
+
+        printf("1. Employee Management\n");
+        printf("2. Budget Management\n");
+        printf("3. Supplier Management\n");
+        printf("4. Asset Management\n");
+        printf("5. Reports\n");
+        printf("6. Exit\n");
+
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+
+            case 1:
+                printf("\nEmployee Management module selected.\n");
+                break;
+
+            case 2:
+                printf("\nBudget Management module selected.\n");
+                break;
+
+            case 3:
+                printf("\nSupplier Management module selected.\n");
+                break;
+
+            case 4:
+                assetManagement();
+                break;
+
+            case 5:
+                printf("\nReports module selected.\n");
+                break;
+
+            case 6:
+                printf("\nThank you for using the Municipal Financial Management System.\n");
+                break;
+
+            default:
+                printf("\nInvalid choice! Please enter 1-6.\n");
+        }
+
+    } while (choice != 6);
+
+    return 0;
 }
